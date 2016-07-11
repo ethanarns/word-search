@@ -4,6 +4,7 @@
 #include <iostream>
 #include <string>
 #include <random>
+#include "reader.h"
 
 QTableWidget * table;
 
@@ -19,6 +20,7 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
 
     table = ui->tableWidget;
     initTable();
+    std::cout << Reader::getRandomWord() << std::endl;
 }
 
 MainWindow::~MainWindow()

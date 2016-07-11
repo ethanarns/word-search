@@ -1,11 +1,13 @@
 #ifndef READER_H
 #define READER_H
 
+#include <string>
 
-class reader
+class Reader
 {
 public:
-    reader();
+    Reader();
+    static std::string getRandomWord();
 };
 
 #endif // READER_H
