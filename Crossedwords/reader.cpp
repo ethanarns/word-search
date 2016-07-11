@@ -3,24 +3,39 @@
 #include <fstream>
 #include <string>
 #include <sstream>
-#include <iostream>
-#include <vector>
+#include <cstdlib>
+#include <ctime>
 
 Reader::Reader()
 {
 
 }
 
-std::string Reader::getRandomWord() {
+long Reader::getFileLength() {
     std::ifstream file("./dictionary.txt");
     std::string line;
-    unsigned int length = 0;
+    long length = 0;
     while(std::getline(file, line)) {
         length++;
-        std::cout << line << std::endl;
     }
-    if(length == 0)
-        return "Error, no words in file";
+    return length;
+}
 
-    return "yep";
+std::string Reader::getRandomWord() {
+    long length = getFileLength();
+    if(length < 1) {
+        return "Error, file empty";
+    }
+    long randNum = rand()%length;
+    std::ifstream file("./dictionary.txt");
+    std::string line;
+    int i = 0;
+    while(std::getline(file, line)) {
+        if(i == randNum){
+            return line;
+        }
+        i++;
+    }
+
+    return "Error!";
 }

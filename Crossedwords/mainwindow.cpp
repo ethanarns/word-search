@@ -3,7 +3,9 @@
 
 #include <iostream>
 #include <string>
-#include <random>
+#include <cstdlib>
+#include <ctime>
+#include <unistd.h>
 #include "reader.h"
 
 QTableWidget * table;
@@ -19,8 +21,8 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
 
     table = ui->tableWidget;
+    srand(time(0));
     initTable();
-    std::cout << Reader::getRandomWord() << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -48,12 +50,13 @@ void initTable() {
             table->setItem(i, j, new QTableWidgetItem(""));
             table->item(i, j)->setFont(QFont("Helvetica", 32));
             table->item(i, j)->setTextAlignment(Qt::AlignCenter);
+            table->item(i, j)->setText(Reader::getRandomWord().substr(0,1).c_str());
         }
     }
 }
 
 std::string getRandomLetter() {
-    std::string final(1, 'A' + random()%24);
+    std::string final(1, 'A' + rand()%26);
     return final;
 }
 

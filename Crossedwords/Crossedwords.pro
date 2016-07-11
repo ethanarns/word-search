@@ -14,10 +14,12 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    reader.cpp
+    reader.cpp \
+    answer.cpp
 
 HEADERS  += mainwindow.h \
-    reader.h
+    reader.h \
+    answer.h
 
 FORMS    += mainwindow.ui
 
