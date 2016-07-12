@@ -7,6 +7,7 @@
 #include <ctime>
 #include <unistd.h>
 #include "reader.h"
+#include "answer.h"
 
 QTableWidget * table;
 
@@ -16,6 +17,17 @@ void deleteItem(int x, int y);
 std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
 
+enum Direction {
+    North = 1,
+    Northeast = 2,
+    East = 3,
+    Southeast = 4,
+    South = 5,
+    Southwest = 6,
+    West = 7,
+    Northwest = 8
+};
+
 MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
@@ -23,6 +35,10 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     table = ui->tableWidget;
     srand(time(0));
     initTable();
+
+    Answer* ans1 = new Answer("Dix", 1, 1, Direction::East);
+    std::cout << "x: " << ans1->getEndLetterX();
+    std::cout << " y: " << ans1->getEndLetterY() << std::endl;
 }
 
 MainWindow::~MainWindow()
@@ -50,7 +66,7 @@ void initTable() {
             table->setItem(i, j, new QTableWidgetItem(""));
             table->item(i, j)->setFont(QFont("Helvetica", 32));
             table->item(i, j)->setTextAlignment(Qt::AlignCenter);
-            table->item(i, j)->setText(Reader::getRandomWord().substr(0,1).c_str());
+            // table->item(i, j)->setText(Reader::getRandomWord().substr(0,1).c_str());
         }
     }
 }
