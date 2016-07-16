@@ -9,9 +9,9 @@ public:
     short getEndLetterX();
     short getEndLetterY();
     std::string baseStr;
-    short int sX;
-    short int sY;
-    short int direction;
+    short sX;
+    short sY;
+    short direction;
 };
 
 #endif // ANSWER_H

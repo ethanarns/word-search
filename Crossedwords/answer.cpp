@@ -2,11 +2,11 @@
 #include <string>
 #include <locale> // For toUpper()
 #include <iostream>
-#include <algorithm>
+#include <algorithm> // For transform()
 
 std::string baseStr;
-short int sX;
-short int sY;
+short sX;
+short sY;
 int direction;
 
 enum Direction {
@@ -23,7 +23,7 @@ enum Direction {
 // Hoists declaration
 std::string toUpperCase(std::string str);
 
-Answer::Answer(std::string str, short int startX, short int startY, int dir)
+Answer::Answer(std::string str, short startX, short startY, int dir)
 {
     if(startX < 0 || startY < 0) {
         std::cout << "ERROR: Invalid Answer position" << std::endl;
@@ -34,7 +34,6 @@ Answer::Answer(std::string str, short int startX, short int startY, int dir)
     sX = startX;
     sY = startY;
     direction = dir;
-    std::cout << baseStr << std::endl;
 }
 
 std::string toUpperCase(std::string str)
@@ -43,7 +42,7 @@ std::string toUpperCase(std::string str)
     return str;
 }
 
-short int Answer::getEndLetterX()
+short Answer::getEndLetterX()
 {
     switch(direction) {
         case Direction::North:
@@ -61,7 +60,7 @@ short int Answer::getEndLetterX()
     return -1;
 }
 
-short int Answer::getEndLetterY()
+short Answer::getEndLetterY()
 {
     switch(direction) {
         case Direction::North:

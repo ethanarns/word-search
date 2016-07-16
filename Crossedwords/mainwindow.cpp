@@ -16,6 +16,9 @@ std::string getRandomLetter();
 void deleteItem(int x, int y);
 std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
+void placeAnswer(Answer ans);
+short squares;
+void resetTable();
 
 enum Direction {
     North = 1,
@@ -36,9 +39,15 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     srand(time(0));
     initTable();
 
-    Answer* ans1 = new Answer("Dix", 1, 1, Direction::East);
-    std::cout << "x: " << ans1->getEndLetterX();
-    std::cout << " y: " << ans1->getEndLetterY() << std::endl;
+    resetTable();
+    Answer* ans1 = new Answer("MiX", 3, 2, Direction::West);
+    placeAnswer(*ans1);
+    Answer* ans2 = new Answer("Fix", 3, 3, Direction::East);
+    placeAnswer(*ans2);
+    Answer* ans3 = new Answer("Prix", 5, 5, Direction::South);
+    placeAnswer(*ans3);
+    Answer* ans4 = new Answer("liX", 6, 6, Direction::North);
+    placeAnswer(*ans4);
 }
 
 MainWindow::~MainWindow()
@@ -46,8 +55,11 @@ MainWindow::~MainWindow()
     delete ui;
 }
 
+/*
+ * Sets up styling and then allocates square Item objects to set
+ */
 void initTable() {
-    short int squares = 14;
+    squares = 14;
     table->setRowCount(squares);
     table->setColumnCount(squares);
     table->verticalHeader()->setVisible(false);
@@ -55,18 +67,15 @@ void initTable() {
     table->setFocusPolicy(Qt::NoFocus);
     table->setSelectionMode(QTableWidget::NoSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
-    short int tableCellSize = 30;
-    for(short int i = 0; i < squares; i++) {
+    short tableCellSize = 30;
+    for(short i = 0; i < squares; i++) {
         table->setColumnWidth(i, tableCellSize);
         table->setRowHeight(i, tableCellSize);
-        std::string str;
-        for(short int j = 0; j < squares; j++) {
+        for(short j = 0; j < squares; j++) {
             // In here, we have access to every single square
-            str = getRandomLetter();
             table->setItem(i, j, new QTableWidgetItem(""));
-            table->item(i, j)->setFont(QFont("Helvetica", 32));
+            table->item(i, j)->setFont(QFont("Helvetica", 20));
             table->item(i, j)->setTextAlignment(Qt::AlignCenter);
-            // table->item(i, j)->setText(Reader::getRandomWord().substr(0,1).c_str());
         }
     }
 }
@@ -90,4 +99,39 @@ std::string getItem(int x, int y) {
 
 void setItem(int x, int y, std::string str) {
     table->item(y, x)->setText(str.c_str());
+}
+
+void placeAnswer(Answer ans) {
+    switch(ans.direction) {
+        case Direction::North:
+            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
+                std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
+                setItem(ans.sX, ans.sY - ans.baseStr.length() + i + 1, shortAns);
+            }
+            break;
+        case Direction::South:
+            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
+                setItem(ans.sX, i + ans.sY, ans.baseStr.substr(i, 1));
+            }
+            break;
+        case Direction::East:
+            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
+                setItem(i + ans.sX, ans.sY, ans.baseStr.substr(i, 1));
+            }
+            break;
+        case Direction::West:
+            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
+                std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
+                setItem(ans.sX - ans.baseStr.length() + i + 1, ans.sY, shortAns);
+            }
+            break;
+    }
+}
+
+void resetTable() {
+    for(short i = 0; i < squares; i++) {
+        for(short j = 0; j < squares; j++) {
+            setItem(i, j, getRandomLetter());
+        }
+    }
 }
