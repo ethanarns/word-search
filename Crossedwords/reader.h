@@ -6,8 +6,6 @@
 class Reader
 {
 public:
-    Reader();
-    ~Reader();
     static std::string getRandomWord();
     static long getFileLength();
 };

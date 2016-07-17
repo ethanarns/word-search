@@ -41,7 +41,7 @@ Answer::Answer() {
 }
 
 Answer::~Answer() {
-    std::cout << "Answer destroyed" << std::endl;
+    std::cout << "Answer destroyed (" << baseStr << ")" << std::endl;
 }
 
 std::string toUpperCase(std::string str)

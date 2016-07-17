@@ -21,7 +21,7 @@ void generateAnswer();
 
 const short squares = 14;
 short numberOfItems = 10;
-std::vector<Answer> ansList; // an "ArrayList"
+std::vector<Answer*> ansList; // an "ArrayList"
 
 enum Direction {
     North = 1,
@@ -50,6 +50,9 @@ MainWindow::~MainWindow()
         for(short j = 0; j < squares; j++) {
             deleteItem(i, j);
         }
+    }
+    for(unsigned int i = 0; i < ansList.size(); i++) {
+        delete ansList.at(i);
     }
     ansList.clear();
     delete ui;
@@ -117,31 +120,31 @@ void setItem(int x, int y, std::string str) {
  * @param ans Answer object to place at coords of itself
  * @return true if success, false if failed
  */
-bool placeAnswer(Answer ans) {
-    switch(ans.direction) {
+bool placeAnswer(Answer* ans) {
+    switch(ans->direction) {
         case Direction::North: // as int, 1
-            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
-                std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
-                setItem(ans.sX, ans.sY - ans.baseStr.length() + i + 1, shortAns);
+            for(unsigned int i = 0; i < ans->baseStr.length(); i++) {
+                std::string shortAns = ans->baseStr.substr(ans->baseStr.length() - 1 - i, 1);
+                setItem(ans->sX, ans->sY - ans->baseStr.length() + i + 1, shortAns);
             }
             ansList.push_back(ans);
             return true; // Replaces break, does the same thing
         case Direction::South: // as int, 3
-            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
-                setItem(ans.sX, i + ans.sY, ans.baseStr.substr(i, 1));
+            for(unsigned int i = 0; i < ans->baseStr.length(); i++) {
+                setItem(ans->sX, i + ans->sY, ans->baseStr.substr(i, 1));
             }
             ansList.push_back(ans);
             return true;
         case Direction::East: // as int, 2
-            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
-                setItem(i + ans.sX, ans.sY, ans.baseStr.substr(i, 1));
+            for(unsigned int i = 0; i < ans->baseStr.length(); i++) {
+                setItem(i + ans->sX, ans->sY, ans->baseStr.substr(i, 1));
             }
             ansList.push_back(ans);
             return true;
         case Direction::West: // as int, 4
-            for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
-                std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
-                setItem(ans.sX - ans.baseStr.length() + i + 1, ans.sY, shortAns);
+            for(unsigned int i = 0; i < ans->baseStr.length(); i++) {
+                std::string shortAns = ans->baseStr.substr(ans->baseStr.length() - 1 - i, 1);
+                setItem(ans->sX - ans->baseStr.length() + i + 1, ans->sY, shortAns);
             }
             ansList.push_back(ans);
             return true;
@@ -168,33 +171,33 @@ bool isValidLocation(int x, int y) {
 
 void generateAnswer() {
     // Create random string for Answer
-    std::string ansStr = "";
+    std::string ansStr = ""; // "length 0"
     while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0)
     { // Zero means this will run at least once
         ansStr = Reader::getRandomWord();
     }
 
     // Create answer with random variables and direction
-    Answer ans(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1);
+    Answer* ans_p = new Answer(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1); // This will stay here for hopefully ever
 
     // Fix placement by sliding word placement into place
-    while(ans.getEndLetterX() < -2) {
+    while(ans_p->getEndLetterX() < -2) {
         std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
-        ans.sX++;
+        ans_p->sX++;
     }
-    while(ans.getEndLetterX() >= squares) {
+    while(ans_p->getEndLetterX() >= squares) {
         std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
-        ans.sX--;
+        ans_p->sX--;
     }
-    while(ans.getEndLetterY() < -2) {
+    while(ans_p->getEndLetterY() < -2) {
         std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
-        ans.sY++;
+        ans_p->sY++;
     }
-    while(ans.getEndLetterY() >= squares) {
+    while(ans_p->getEndLetterY() >= squares) {
         std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
-        ans.sY--;
+        ans_p->sY--;
     }
 
     // Actually place things
-    placeAnswer(ans); // But another is created for this
+    placeAnswer(ans_p);
 }

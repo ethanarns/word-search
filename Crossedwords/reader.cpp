@@ -1,18 +1,12 @@
-#include "reader.h"
+#include "reader.h" // Brings in <string>
 
 #include <fstream>
-#include <string>
 #include <iostream>
 
-Reader::Reader()
-{
-    std::cout << "Reader initialized" << std::endl;
-}
-
-Reader::~Reader()
-{
-    std::cout << "Reader destructed" << std::endl;
-}
+/*
+ * A static class used for accessing the dictionary file
+ * Needs no constructors or destructors
+ */
 
 long Reader::getFileLength() {
     std::ifstream file("./dictionary.txt");
@@ -42,7 +36,6 @@ std::string Reader::getRandomWord() {
                 else
                     break;
             }
-            std::cout << "Random word: " << str << std::endl;
             return str;
         }
         i++;
