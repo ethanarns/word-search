@@ -11,13 +11,9 @@ int direction;
 
 enum Direction {
     North = 1,
-    Northeast = 2,
-    East = 3,
-    Southeast = 4,
-    South = 5,
-    Southwest = 6,
-    West = 7,
-    Northwest = 8
+    East = 2,
+    South = 3,
+    West = 4,
 };
 
 // Hoists declaration
@@ -58,6 +54,7 @@ short Answer::getEndLetterX()
         case Direction::West:
             return sX - baseStr.length() - 1;
         default:
+            std::cout << "Error in getEndLetterX()" << std::endl;
             return -1;
     }
 
@@ -66,6 +63,7 @@ short Answer::getEndLetterX()
 
 short Answer::getEndLetterY()
 {
+    std::cout << "Direction: " << (int) direction << std::endl;
     switch(direction) {
         case Direction::North:
             return sY - baseStr.length() - 1;
@@ -76,6 +74,7 @@ short Answer::getEndLetterY()
         case Direction::West:
             return sY;
         default:
+            std::cout << "Error in getEndLetterY()" << std::endl;
             return -1;
     }
 

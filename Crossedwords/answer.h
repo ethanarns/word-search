@@ -13,6 +13,7 @@ public:
     short sX;
     short sY;
     short direction;
+    bool isEndInBounds(short squares);
 };
 
 #endif // ANSWER_H
