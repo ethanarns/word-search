@@ -32,8 +32,15 @@ Answer::Answer(std::string str, short startX, short startY, int dir)
     direction = dir;
 }
 
+Answer::Answer() {
+    baseStr = "TEST";
+    sX = 0;
+    sY = 0;
+    direction = Direction::East;
+}
+
 Answer::~Answer() {
-    std::cout << "Answer destroyed" << std::endl;
+    // std::cout << "Answer destroyed" << std::endl;
 }
 
 std::string toUpperCase(std::string str)
@@ -63,7 +70,6 @@ short Answer::getEndLetterX()
 
 short Answer::getEndLetterY()
 {
-    std::cout << "Direction: " << (int) direction << std::endl;
     switch(direction) {
         case Direction::North:
             return sY - baseStr.length() - 1;

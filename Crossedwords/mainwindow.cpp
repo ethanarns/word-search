@@ -2,11 +2,13 @@
 #include "ui_mainwindow.h"
 
 #include <iostream>
+#include <vector>
 
-#include "reader.h" // Brings in <string>
+#include "reader.h" // Brings in <string> too
 #include "answer.h"
 
 QTableWidget * table;
+QListView * list;
 
 void initTable();
 std::string getRandomLetter();
@@ -14,9 +16,12 @@ void deleteItem(int x, int y);
 std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
 bool placeAnswer(Answer ans);
-short squares;
 void resetTable();
 void generateAnswer();
+
+const short squares = 14;
+short numberOfItems = 10;
+std::vector<Answer> ansList; // an "ArrayList"
 
 enum Direction {
     North = 1,
@@ -30,6 +35,7 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     ui->setupUi(this);
 
     table = ui->tableWidget;
+    list = ui->listView;
     srand(time(0));
     initTable();
 
@@ -45,6 +51,7 @@ MainWindow::~MainWindow()
             deleteItem(i, j);
         }
     }
+    ansList.clear();
     delete ui;
 }
 
@@ -52,7 +59,6 @@ MainWindow::~MainWindow()
  * Sets up styling and then allocates square Item objects to set
  */
 void initTable() {
-    squares = 14;
     table->setRowCount(squares);
     table->setColumnCount(squares);
     table->verticalHeader()->setVisible(false);
@@ -112,7 +118,7 @@ void setItem(int x, int y, std::string str) {
  * @return true if success, false if failed
  */
 bool placeAnswer(Answer ans) {
-    std::cout << "Doing placeAnswer(), direction is " << ans.direction << std::endl;
+    //std::cout << "Doing placeAnswer(), direction is " << ans.direction << std::endl;
     switch(ans.direction) {
         case Direction::North: // as int, 1
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
@@ -150,6 +156,7 @@ void resetTable() {
             setItem(i, j, getRandomLetter());
         }
     }
+    ansList.clear();
 }
 
 bool isValidLocation(int x, int y) {
@@ -162,11 +169,24 @@ void generateAnswer() {
     { // This will continue getting random words until ansStr is the right length
         ansStr = Reader::getRandomWord(); // This should only happen once for the most part
     }
-    Answer ans(ansStr,rand()%squares,rand()%squares,(rand()%4) + 1); // This is destroyed at end of this scope
-    std::cout << ans.getEndLetterX() << " " << ans.getEndLetterY() << std::endl;
-    if(ans.getEndLetterX() < 0) {
+    Answer ans(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1); // This is destroyed at end of this scope
+    //std::cout << ans.getEndLetterX() << " " << ans.getEndLetterY() << std::endl;
+    while(ans.getEndLetterX() < -2) {
         std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
+        ans.sX++;
+    }
+    while(ans.getEndLetterX() >= squares) {
+        std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
+        ans.sX--;
+    }
+    while(ans.getEndLetterY() < -2) {
+        std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
+        ans.sY++;
+    }
+    while(ans.getEndLetterY() >= squares) {
+        std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
+        ans.sY--;
     }
     placeAnswer(ans); // But another is created for this
-    // std::cout << "generateAnswer() done" << std::endl;
+    ansList.push_back(ans); // Another goes to this "ArrayList"
 }
