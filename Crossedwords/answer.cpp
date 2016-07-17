@@ -1,5 +1,4 @@
-#include "answer.h"
-#include <string>
+#include "answer.h" // Brings in <string>
 #include <locale> // For toUpper()
 #include <iostream>
 #include <algorithm> // For transform()
@@ -30,6 +29,7 @@ Answer::Answer(std::string str, short startX, short startY, int dir)
     sX = startX;
     sY = startY;
     direction = dir;
+    std::cout << "Answer created (" << baseStr << ")" << std::endl;
 }
 
 Answer::Answer() {
@@ -37,10 +37,11 @@ Answer::Answer() {
     sX = 0;
     sY = 0;
     direction = Direction::East;
+    std::cout << "Answer created (Default)" << std::endl;
 }
 
 Answer::~Answer() {
-    // std::cout << "Answer destroyed" << std::endl;
+    std::cout << "Answer destroyed" << std::endl;
 }
 
 std::string toUpperCase(std::string str)

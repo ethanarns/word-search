@@ -118,29 +118,32 @@ void setItem(int x, int y, std::string str) {
  * @return true if success, false if failed
  */
 bool placeAnswer(Answer ans) {
-    //std::cout << "Doing placeAnswer(), direction is " << ans.direction << std::endl;
     switch(ans.direction) {
         case Direction::North: // as int, 1
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
                 setItem(ans.sX, ans.sY - ans.baseStr.length() + i + 1, shortAns);
             }
+            ansList.push_back(ans);
             return true; // Replaces break, does the same thing
         case Direction::South: // as int, 3
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 setItem(ans.sX, i + ans.sY, ans.baseStr.substr(i, 1));
             }
+            ansList.push_back(ans);
             return true;
         case Direction::East: // as int, 2
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 setItem(i + ans.sX, ans.sY, ans.baseStr.substr(i, 1));
             }
+            ansList.push_back(ans);
             return true;
         case Direction::West: // as int, 4
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
                 setItem(ans.sX - ans.baseStr.length() + i + 1, ans.sY, shortAns);
             }
+            ansList.push_back(ans);
             return true;
         default: // Failed for some reason
             std::cout << "Error in placeAnswer()" << std::endl;
@@ -164,13 +167,17 @@ bool isValidLocation(int x, int y) {
 }
 
 void generateAnswer() {
-    std::string ansStr = ""; // String to be used in generated Answer, length zero
-    while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0) // 0 will make it happen once at least
-    { // This will continue getting random words until ansStr is the right length
-        ansStr = Reader::getRandomWord(); // This should only happen once for the most part
+    // Create random string for Answer
+    std::string ansStr = "";
+    while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0)
+    { // Zero means this will run at least once
+        ansStr = Reader::getRandomWord();
     }
-    Answer ans(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1); // This is destroyed at end of this scope
-    //std::cout << ans.getEndLetterX() << " " << ans.getEndLetterY() << std::endl;
+
+    // Create answer with random variables and direction
+    Answer ans(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1);
+
+    // Fix placement by sliding word placement into place
     while(ans.getEndLetterX() < -2) {
         std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
         ans.sX++;
@@ -187,6 +194,7 @@ void generateAnswer() {
         std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
         ans.sY--;
     }
+
+    // Actually place things
     placeAnswer(ans); // But another is created for this
-    ansList.push_back(ans); // Another goes to this "ArrayList"
 }
