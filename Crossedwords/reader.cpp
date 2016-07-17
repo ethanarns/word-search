@@ -2,13 +2,16 @@
 
 #include <fstream>
 #include <string>
-#include <sstream>
-#include <cstdlib>
-#include <ctime>
+#include <iostream>
 
 Reader::Reader()
 {
+    std::cout << "Reader initialized" << std::endl;
+}
 
+Reader::~Reader()
+{
+    std::cout << "Reader destructed" << std::endl;
 }
 
 long Reader::getFileLength() {
@@ -32,7 +35,15 @@ std::string Reader::getRandomWord() {
     int i = 0;
     while(std::getline(file, line)) {
         if(i == randNum){
-            return line;
+            std::string str = "";
+            for(unsigned short i = 0; i < line.length(); i++) {
+                if(line.substr(i,1) != "'")
+                    str += line.substr(i,1);
+                else
+                    break;
+            }
+            std::cout << "Random word: " << str << std::endl;
+            return str;
         }
         i++;
     }

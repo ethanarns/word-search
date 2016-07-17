@@ -6,6 +6,7 @@ class Answer
 {
 public:
     Answer(std::string str, short startX, short startY, int dir);
+    ~Answer();
     short getEndLetterX();
     short getEndLetterY();
     std::string baseStr;

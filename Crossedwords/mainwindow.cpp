@@ -2,11 +2,8 @@
 #include "ui_mainwindow.h"
 
 #include <iostream>
-#include <string>
-#include <cstdlib>
-#include <ctime>
-#include <unistd.h>
-#include "reader.h"
+
+#include "reader.h" // Brings in <string>
 #include "answer.h"
 
 QTableWidget * table;
@@ -16,9 +13,10 @@ std::string getRandomLetter();
 void deleteItem(int x, int y);
 std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
-void placeAnswer(Answer ans);
+bool placeAnswer(Answer ans);
 short squares;
 void resetTable();
+void generateAnswer();
 
 enum Direction {
     North = 1,
@@ -39,15 +37,9 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     srand(time(0));
     initTable();
 
+    generateAnswer();
+
     resetTable();
-    Answer* ans1 = new Answer("MiX", 3, 2, Direction::West);
-    placeAnswer(*ans1);
-    Answer* ans2 = new Answer("Fix", 3, 3, Direction::East);
-    placeAnswer(*ans2);
-    Answer* ans3 = new Answer("Prix", 5, 5, Direction::South);
-    placeAnswer(*ans3);
-    Answer* ans4 = new Answer("liX", 6, 6, Direction::North);
-    placeAnswer(*ans4);
 }
 
 MainWindow::~MainWindow()
@@ -101,31 +93,40 @@ void setItem(int x, int y, std::string str) {
     table->item(y, x)->setText(str.c_str());
 }
 
-void placeAnswer(Answer ans) {
+/**
+ * @brief placeAnswer Puts the specific Answer object onto the board
+ * @param ans Answer object to place at coords of itself
+ * @return true if success, false if failed
+ */
+bool placeAnswer(Answer ans) {
     switch(ans.direction) {
         case Direction::North:
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
                 setItem(ans.sX, ans.sY - ans.baseStr.length() + i + 1, shortAns);
             }
-            break;
+            return true; // Replaces break, does the same thing
         case Direction::South:
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 setItem(ans.sX, i + ans.sY, ans.baseStr.substr(i, 1));
             }
-            break;
+            return true;
         case Direction::East:
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 setItem(i + ans.sX, ans.sY, ans.baseStr.substr(i, 1));
             }
-            break;
+            return true;
         case Direction::West:
             for(unsigned int i = 0; i < ans.baseStr.length(); i++) {
                 std::string shortAns = ans.baseStr.substr(ans.baseStr.length() - 1 - i, 1);
                 setItem(ans.sX - ans.baseStr.length() + i + 1, ans.sY, shortAns);
             }
-            break;
+            return true;
+        default: // Failed for some reason
+            return false;
     }
+    // Likely never to be reached, but there for compiler satisfation
+    return false;
 }
 
 void resetTable() {
@@ -134,4 +135,18 @@ void resetTable() {
             setItem(i, j, getRandomLetter());
         }
     }
+}
+
+bool isValidLocation(int x, int y) {
+    return x < squares && y < squares;
+}
+
+void generateAnswer() {
+    std::string ansStr = ""; // String to be used in generated Answer, length zero
+    while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0) // 0 will make it happen once at least
+    { // This will continue getting random words until ansStr is the right length
+        ansStr = Reader::getRandomWord(); // This should only happen once for the most part
+    }
+    Answer ans(ansStr,0,0,rand()%4); // This is destroyed at end of this scope
+    placeAnswer(ans); // But another is created for this
 }

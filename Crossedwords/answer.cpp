@@ -36,6 +36,10 @@ Answer::Answer(std::string str, short startX, short startY, int dir)
     direction = dir;
 }
 
+Answer::~Answer() {
+    std::cout << "Answer destroyed" << std::endl;
+}
+
 std::string toUpperCase(std::string str)
 {
     std::transform(str.begin(), str.end(), str.begin(), toupper);
