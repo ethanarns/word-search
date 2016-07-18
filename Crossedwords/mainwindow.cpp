@@ -6,6 +6,7 @@
 
 #include "reader.h" // Brings in <string> too
 #include "answer.h"
+#include "point.h"
 
 QTableWidget * table;
 QListView * list;
@@ -15,7 +16,7 @@ std::string getRandomLetter();
 void deleteItem(int x, int y);
 std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
-bool placeAnswer(Answer ans);
+bool placeAnswer(Answer* ans);
 void resetTable();
 void generateAnswer();
 
@@ -41,19 +42,29 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
 
     // resetTable();
 
-    generateAnswer();
+    //generateAnswer();
+    //generateAnswer();
+
+    Answer* ans2 = new Answer("TEST",3,0,Direction::West);
+    placeAnswer(ans2);
+    Answer* ans1 = new Answer("ASDF",1,0,Direction::South);
+    placeAnswer(ans1);
+    std::cout << "" << ans2->doesOverlap(ans1) << std::endl;
 }
 
 MainWindow::~MainWindow()
 {
+    // Erases and deallocates all letter items in table
     for(short i = 0; i < squares; i++) {
         for(short j = 0; j < squares; j++) {
             deleteItem(i, j);
         }
     }
+    // Deallocates all items in ansList (doesn't remove them from the list)
     for(unsigned int i = 0; i < ansList.size(); i++) {
         delete ansList.at(i);
     }
+    // Removes just in case
     ansList.clear();
     delete ui;
 }
@@ -156,13 +167,16 @@ bool placeAnswer(Answer* ans) {
     return false;
 }
 
+/*
+ * Sets all square items to random letters
+ * Does not affect list of Answers
+ */
 void resetTable() {
     for(short i = 0; i < squares; i++) {
         for(short j = 0; j < squares; j++) {
             setItem(i, j, getRandomLetter());
         }
     }
-    ansList.clear();
 }
 
 bool isValidLocation(int x, int y) {
@@ -177,8 +191,8 @@ void generateAnswer() {
         ansStr = Reader::getRandomWord();
     }
 
-    // Create answer with random variables and direction
-    Answer* ans_p = new Answer(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1); // This will stay here for hopefully ever
+    // Create answer (as pointer, for survival beyond scope) with random variables and direction
+    Answer* ans_p = new Answer(ansStr,rand()%squares,rand()%squares, (rand()%4) + 1);
 
     // Fix placement by sliding word placement into place
     while(ans_p->getEndLetterX() < -2) {

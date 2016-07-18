@@ -15,11 +15,13 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     reader.cpp \
-    answer.cpp
+    answer.cpp \
+    point.cpp
 
 HEADERS  += mainwindow.h \
     reader.h \
-    answer.h
+    answer.h \
+    point.h
 
 FORMS    += mainwindow.ui
 

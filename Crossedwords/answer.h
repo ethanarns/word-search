@@ -14,7 +14,7 @@ public:
     short sX;
     short sY;
     short direction;
-    bool isEndInBounds(short squares);
+    bool doesOverlap(Answer* ans_p);
 };
 
 #endif // ANSWER_H

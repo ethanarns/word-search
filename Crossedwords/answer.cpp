@@ -1,7 +1,11 @@
 #include "answer.h" // Brings in <string>
+
 #include <locale> // For toUpper()
 #include <iostream>
 #include <algorithm> // For transform()
+#include <iostream>
+
+#include "point.h"
 
 std::string baseStr;
 short sX;
@@ -86,4 +90,56 @@ short Answer::getEndLetterY()
     }
 
     return -1;
+}
+
+bool Answer::doesOverlap(Answer* ans_p) {
+    // First, make a bunch of points for each letter
+    Point thisPts[this->baseStr.length()];
+    switch(this->direction) {
+        case Direction::North:
+            for (unsigned short i = 0; i < this->baseStr.length(); i++) {
+                thisPts[i] = Point(this->sX, this->sY - i);
+            }
+            break;
+        case Direction::South:
+            for (unsigned short i = 0; i < this->baseStr.length(); i++) {
+                thisPts[i] = Point(this->sX, this->sY + i);
+            }
+            break;
+        case Direction::East:
+            for (unsigned short i = 0; i < this->baseStr.length(); i++) {
+                thisPts[i] = Point(this->sX + i, this->sY);
+            }
+            break;
+        case Direction::West:
+            for (unsigned short i = 0; i < this->baseStr.length(); i++) {
+                thisPts[i] = Point(this->sX - i, this->sY);
+            }
+            break;
+    }
+    Point thosePts[ans_p->baseStr.length()];
+    switch(ans_p->direction) {
+        case Direction::North:
+            for (unsigned short i = 0; i < ans_p->baseStr.length(); i++) {
+                thosePts[i] = Point(ans_p->sX, ans_p->sY - i);
+            }
+            break;
+        case Direction::South:
+            for (unsigned short i = 0; i < ans_p->baseStr.length(); i++) {
+                thosePts[i] = Point(ans_p->sX, ans_p->sY + i);
+            }
+            break;
+        case Direction::East:
+            for (unsigned short i = 0; i < ans_p->baseStr.length(); i++) {
+                thosePts[i] = Point(ans_p->sX + i, ans_p->sY);
+            }
+            break;
+        case Direction::West:
+            for (unsigned short i = 0; i < ans_p->baseStr.length(); i++) {
+                thosePts[i] = Point(ans_p->sX - i, ans_p->sY);
+            }
+            break;
+    }
+
+    return false;
 }
