@@ -47,7 +47,7 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
 
     Answer* ans2 = new Answer("TEST",3,0,Direction::West);
     placeAnswer(ans2);
-    Answer* ans1 = new Answer("ASDF",1,0,Direction::South);
+    Answer* ans1 = new Answer("ASDF",1,1,Direction::South);
     placeAnswer(ans1);
     std::cout << "" << ans2->doesOverlap(ans1) << std::endl;
 }

@@ -140,6 +140,14 @@ bool Answer::doesOverlap(Answer* ans_p) {
             }
             break;
     }
+    // Now check every one to see if it overlaps
+    for(unsigned short int i = 0; i < this->baseStr.length(); i++) {
+        for(unsigned short int j = 0; j < ans_p->baseStr.length(); j++)
+        {
+            if(thisPts[i].doesOverlap(&thosePts[j]))
+                return true;
+        }
+    }
 
     return false;
 }
