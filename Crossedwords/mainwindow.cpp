@@ -4,11 +4,6 @@
 #include <iostream>
 #include <vector>
 
-#include <QStringList>
-#include <QStringListModel>
-#include <QAbstractItemView>
-#include <QPushButton>
-
 #include "reader.h" // Brings in <string> too
 #include "answer.h"
 #include "point.h"
@@ -31,6 +26,7 @@ void generateAllAnswers();
 void printAnsList();
 void updateList();
 void newGame();
+void sayReading();
 
 const short squares = 14;
 short numberOfItems = 10;
@@ -56,10 +52,10 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     b_newGame = ui->b_newGame;
     initGui();
 
+    connect(b_newGame, SIGNAL (pressed()), this, SLOT (sayReading()));
     connect(b_newGame, SIGNAL (released()), this, SLOT (newGame()));
 
     srand(time(0));
-    //newGame();
 }
 
 MainWindow::~MainWindow()
@@ -76,6 +72,7 @@ MainWindow::~MainWindow()
     }
     // Removes just in case
     ansList.clear();
+
     delete ui;
 }
 
@@ -284,6 +281,13 @@ void updateList() {
         strings << ansList.at(i)->baseStr.c_str();
     }
     model->setStringList(strings); // Refreshes list
+}
+
+void MainWindow::sayReading(){
+    ansList.clear();
+    strings.clear();
+    strings << "Reading dictionary.txt...";
+    model->setStringList(strings);
 }
 
 void MainWindow::newGame() {
