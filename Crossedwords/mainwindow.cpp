@@ -4,14 +4,22 @@
 #include <iostream>
 #include <vector>
 
+#include <QStringList>
+#include <QStringListModel>
+#include <QAbstractItemView>
+#include <QPushButton>
+
 #include "reader.h" // Brings in <string> too
 #include "answer.h"
 #include "point.h"
 
 QTableWidget * table;
 QListView * list;
+QStringListModel * model;
+QStringList strings;
+QPushButton * b_newGame;
 
-void initTable();
+void initGui();
 std::string getRandomLetter();
 void deleteItem(int x, int y);
 std::string getItem(int x, int y);
@@ -21,6 +29,8 @@ void resetTable();
 bool generateAnswer();
 void generateAllAnswers();
 void printAnsList();
+void updateList();
+void newGame();
 
 const short squares = 14;
 short numberOfItems = 10;
@@ -37,16 +47,19 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
 {
     ui->setupUi(this);
 
+    model = new QStringListModel(this);
+    model->setStringList(strings);
+    ui->listView->setModel(model);
+
     table = ui->tableWidget;
     list = ui->listView;
+    b_newGame = ui->b_newGame;
+    initGui();
+
+    connect(b_newGame, SIGNAL (released()), this, SLOT (newGame()));
+
     srand(time(0));
-    initTable();
-
-    resetTable();
-
-    generateAllAnswers();
-
-    printAnsList();
+    //newGame();
 }
 
 MainWindow::~MainWindow()
@@ -69,13 +82,14 @@ MainWindow::~MainWindow()
 /*
  * Sets up styling and then allocates square Item objects to set
  */
-void initTable() {
+void initGui() {
+    // First, do stuff for the table
     table->setRowCount(squares);
     table->setColumnCount(squares);
     table->verticalHeader()->setVisible(false);
     table->horizontalHeader()->setVisible(false);
-    table->setFocusPolicy(Qt::NoFocus);
-    table->setSelectionMode(QTableWidget::NoSelection);
+    //table->setFocusPolicy(Qt::NoFocus);
+    //table->setSelectionMode(QTableWidget::NoSelection);
     table->setEditTriggers(QAbstractItemView::NoEditTriggers);
     short tableCellSize = 30;
     for(short i = 0; i < squares; i++) {
@@ -88,6 +102,9 @@ void initTable() {
             table->item(i, j)->setTextAlignment(Qt::AlignCenter);
         }
     }
+
+    // Now for the list
+    list->setEditTriggers(QAbstractItemView::NoEditTriggers);
 }
 
 /**
@@ -100,6 +117,7 @@ std::string getRandomLetter() {
 }
 
 void generateAllAnswers() {
+    ansList.clear();
     unsigned short i = 0;
     while (i < numberOfItems)
     {
@@ -107,8 +125,8 @@ void generateAllAnswers() {
         if(generateAnswer()) {
             i++; // Increase i
         }
-        else { // Remove upon deugging done
-            std::cout << "Placement failed, retrying..." << std::endl;
+        else {
+            //std::cout << "Placement failed, retrying..." << std::endl;
         }
         // If generateAnswer didn't work, it'll just loop back without increasing
     }
@@ -236,7 +254,7 @@ bool generateAnswer() {
     // Go through the existing answers and if one overlaps, return false;
     for(unsigned short i = 0; i < ansList.size(); i++) {
         if(ans_p->doesOverlap(ansList.at(i))) {
-            std::cout << ans_p->baseStr << " overlaps existing Answer " << ansList.at(i)->baseStr << ". Destroying..." << std::endl;
+            // std::cout << ans_p->baseStr << " overlaps existing Answer " << ansList.at(i)->baseStr << ". Destroying..." << std::endl;
             delete ans_p; // Just in case
             return false;
         }
@@ -256,4 +274,20 @@ void printAnsList() {
     for(unsigned char i = 0; i < ansList.size(); i++) {
         std::cout << ansList.at(i)->baseStr << std::endl;
     }
+}
+
+void updateList() {
+    //std::cout << "Updating side list..." << std::endl;
+    strings.clear();
+    for(unsigned char i = 0; i < ansList.size(); i++)
+    {
+        strings << ansList.at(i)->baseStr.c_str();
+    }
+    model->setStringList(strings); // Refreshes list
+}
+
+void MainWindow::newGame() {
+    resetTable();
+    generateAllAnswers();
+    updateList();
 }
