@@ -18,7 +18,7 @@ std::string getItem(int x, int y);
 void setItem(int x, int y, std::string str);
 bool placeAnswer(Answer* ans);
 void resetTable();
-void generateAnswer();
+bool generateAnswer();
 
 const short squares = 14;
 short numberOfItems = 10;
@@ -40,16 +40,10 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     srand(time(0));
     initTable();
 
-    // resetTable();
+    //resetTable();
 
-    //generateAnswer();
-    //generateAnswer();
-
-    Answer* ans2 = new Answer("TEST",3,0,Direction::West);
-    placeAnswer(ans2);
-    Answer* ans1 = new Answer("ASDF",1,1,Direction::South);
-    placeAnswer(ans1);
-    std::cout << "" << ans2->doesOverlap(ans1) << std::endl;
+    generateAnswer();
+    generateAnswer();
 }
 
 MainWindow::~MainWindow()
@@ -183,7 +177,11 @@ bool isValidLocation(int x, int y) {
     return x < squares && y < squares && x >= 0 && y >= 0;
 }
 
-void generateAnswer() {
+/**
+ * @brief generateAnswer  Creates an Answer and attempts to place it
+ * @return                true if creates answer that isn't overlapping, false if failed
+ */
+bool generateAnswer() {
     // Create random string for Answer
     std::string ansStr = ""; // "length 0"
     while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0)
@@ -196,22 +194,35 @@ void generateAnswer() {
 
     // Fix placement by sliding word placement into place
     while(ans_p->getEndLetterX() < -2) {
-        std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
+        //std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
         ans_p->sX++;
     }
     while(ans_p->getEndLetterX() >= squares) {
-        std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
+        //std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
         ans_p->sX--;
     }
     while(ans_p->getEndLetterY() < -2) {
-        std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
+        //std::cout << "endLetterX is below zero, increasing sX..." << std::endl;
         ans_p->sY++;
     }
     while(ans_p->getEndLetterY() >= squares) {
-        std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
+        //std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
         ans_p->sY--;
     }
-
-    // Actually place things
+    // If there's no Answers, just place it anyway
+    if(ansList.size() == 0) {
+        placeAnswer(ans_p);
+        return true;
+    }
+    // Go through the existing answers and if one overlaps, return false;
+    for(unsigned short i = 0; i < ansList.size(); i++) {
+        if(ans_p->doesOverlap(ansList.at(i))) {
+            std::cout << ans_p->baseStr << " overlaps " << ansList.at(i)->baseStr << ". Destroying..." << std::endl;
+            delete ans_p;
+            return false;
+        }
+    }
+    // No overlaps, despite other things on board. Place it!
     placeAnswer(ans_p);
+    return true;
 }
