@@ -19,6 +19,8 @@ void setItem(int x, int y, std::string str);
 bool placeAnswer(Answer* ans);
 void resetTable();
 bool generateAnswer();
+void generateAllAnswers();
+void printAnsList();
 
 const short squares = 14;
 short numberOfItems = 10;
@@ -40,10 +42,11 @@ MainWindow::MainWindow(QWidget *parent) :QMainWindow(parent), ui(new Ui::MainWin
     srand(time(0));
     initTable();
 
-    //resetTable();
+    resetTable();
 
-    generateAnswer();
-    generateAnswer();
+    generateAllAnswers();
+
+    printAnsList();
 }
 
 MainWindow::~MainWindow()
@@ -87,9 +90,28 @@ void initTable() {
     }
 }
 
+/**
+ * @brief getRandomLetter   generates a random uppercase letter
+ * @return                  a single letter String
+ */
 std::string getRandomLetter() {
     std::string final(1, 'A' + rand()%26);
     return final;
+}
+
+void generateAllAnswers() {
+    unsigned short i = 0;
+    while (i < numberOfItems)
+    {
+        // This returns true if it worked
+        if(generateAnswer()) {
+            i++; // Increase i
+        }
+        else { // Remove upon deugging done
+            std::cout << "Placement failed, retrying..." << std::endl;
+        }
+        // If generateAnswer didn't work, it'll just loop back without increasing
+    }
 }
 
 /*
@@ -173,10 +195,6 @@ void resetTable() {
     }
 }
 
-bool isValidLocation(int x, int y) {
-    return x < squares && y < squares && x >= 0 && y >= 0;
-}
-
 /**
  * @brief generateAnswer  Creates an Answer and attempts to place it
  * @return                true if creates answer that isn't overlapping, false if failed
@@ -184,7 +202,7 @@ bool isValidLocation(int x, int y) {
 bool generateAnswer() {
     // Create random string for Answer
     std::string ansStr = ""; // "length 0"
-    while (ansStr.length() > (unsigned int) squares || ansStr.length() == 0)
+    while (ansStr.length() > (unsigned int) squares - (rand()%3) || ansStr.length() == 0)
     { // Zero means this will run at least once
         ansStr = Reader::getRandomWord();
     }
@@ -209,20 +227,33 @@ bool generateAnswer() {
         //std::cout << "endLetterX is equal or above Squares, decreasing sX..." << std::endl;
         ans_p->sY--;
     }
+
     // If there's no Answers, just place it anyway
     if(ansList.size() == 0) {
         placeAnswer(ans_p);
-        return true;
+        return true; // Success!
     }
     // Go through the existing answers and if one overlaps, return false;
     for(unsigned short i = 0; i < ansList.size(); i++) {
         if(ans_p->doesOverlap(ansList.at(i))) {
-            std::cout << ans_p->baseStr << " overlaps " << ansList.at(i)->baseStr << ". Destroying..." << std::endl;
-            delete ans_p;
+            std::cout << ans_p->baseStr << " overlaps existing Answer " << ansList.at(i)->baseStr << ". Destroying..." << std::endl;
+            delete ans_p; // Just in case
             return false;
         }
     }
     // No overlaps, despite other things on board. Place it!
     placeAnswer(ans_p);
-    return true;
+
+    return true; // Success!
+}
+
+void printAnsList() {
+    if(ansList.size() == 0) {
+        std::cout << "No Answers initialized" << std::endl;
+        return; // Don't bother
+    }
+    std::cout << "List of current Answers (Count: " << ansList.size() << ")" << std::endl;
+    for(unsigned char i = 0; i < ansList.size(); i++) {
+        std::cout << ansList.at(i)->baseStr << std::endl;
+    }
 }
